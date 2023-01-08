@@ -1,24 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useReducer, useState } from "react";
+import "./App.css";
+import { Items } from "./components/Listitems";
+import { reduceFunc } from "./components/reducer";
 
 function App() {
+  const [task, setTask] = useState("");
+
+  const [id, setId] = useState(0);
+
+  const initial = [];
+
+  const [arr, dispatch] = useReducer(reduceFunc, initial);
+
+  function handleChange(e) {
+    setTask(e.target.value);
+  }
+
+  function handleClick() {
+    setTask("");
+    setId(id + 1);
+    dispatch({
+      type: "ADDED",
+      id: id,
+      todo: task,
+    });
+  }
+  function handleDelete(id) {
+    dispatch({
+      type: "DELETED",
+      id: id,
+    });
+  }
+  function handleEdit(task) {
+    dispatch({
+      type: "EDIT",
+      todo: task,
+    });
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <input name="text" value={task} onChange={handleChange} id="input" />
+      <button type="button" onClick={handleClick}>
+        ADD
+      </button>
+      <div>
+        <ul>
+          {arr.map((item) => (
+            <li key={item.id}>
+              <Items item={item} onEdit={handleEdit} OnDelete={handleDelete} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 }
 
